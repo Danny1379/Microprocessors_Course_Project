@@ -1,0 +1,8 @@
+--cpu=Cortex-M4.fp.sp
+".\main.o"
+".\startup_stm32f401xe.o"
+".\system_stm32f4xx.o"
+--strict --scatter ".\slave_bus_controller.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\slave_bus_controller.map" -o .\slave_bus_controller.axf
