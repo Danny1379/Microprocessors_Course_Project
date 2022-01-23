@@ -26,9 +26,12 @@ int main(void){
 	GPIOB_init();
 	GPIOB->ODR = 0 ; 
 	GPIOB->ODR = 1 ; 
-	usart2_write_string("hello bitches");
+	//usart2_write_string("hello bitches");
+	GPIOA->MODER |= 0x00040000;
+	GPIOA->ODR |= 0x00000200 ;
 	while(1){ // main event loop 
 		GPIOB->ODR ^= 1 ; 
+		write_usart2('i');
 		delayMS(10);
 	}
 }
