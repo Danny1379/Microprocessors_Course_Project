@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp.sp
+"master\startup_stm32f401xe.o"
+"master\main.o"
+"master\stm32f4xx_it.o"
+"master\stm32f4xx_hal_msp.o"
+"master\stm32f4xx_hal_tim.o"
+"master\stm32f4xx_hal_tim_ex.o"
+"master\stm32f4xx_hal_uart.o"
+"master\stm32f4xx_hal_rcc.o"
+"master\stm32f4xx_hal_rcc_ex.o"
+"master\stm32f4xx_hal_flash.o"
+"master\stm32f4xx_hal_flash_ex.o"
+"master\stm32f4xx_hal_flash_ramfunc.o"
+"master\stm32f4xx_hal_gpio.o"
+"master\stm32f4xx_hal_dma_ex.o"
+"master\stm32f4xx_hal_dma.o"
+"master\stm32f4xx_hal_pwr.o"
+"master\stm32f4xx_hal_pwr_ex.o"
+"master\stm32f4xx_hal_cortex.o"
+"master\stm32f4xx_hal.o"
+"master\stm32f4xx_hal_exti.o"
+"master\system_stm32f4xx.o"
+--strict --scatter "master\master.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "master.map" -o master\master.axf
