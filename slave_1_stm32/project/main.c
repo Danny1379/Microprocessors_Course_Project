@@ -9,6 +9,7 @@
 
 //-------------------------//constants 
 const int BRR_value = 0x683 ; // baudrate register value
+uint8_t synchronizer[3] = {0xFC,0xFC,0xFC};
 //-------------------------||
 
 
@@ -46,17 +47,26 @@ void GPIOA_init(){
 void listen_for_master(){
 	GPIOA->ODR &= ~mask(9);
 	uint8_t d = read_usart2();
+	int synch_count = 3 ; 
+	while(synch_count>0){
+		if(d==synchronizer[0]){
+			synch_count-- ; 
+		}
+		d = read_usart2();
+	}
 	if(d == 0x1){
-		if(read_usart2() == 0x80){ // read 
+		d = read_usart2();
+		if( d == 0x80){ // read 
 			if(read_usart2() == 0x00){
 				//GPIOA->ODR |= mask(9);
 				write_to_master();
-				while(1);
 			}
 		}
-		else if(read_usart2() == 0x0){ // write 
-			GPIOB->ODR = 0 ; 
-			GPIOB->ODR = 1;  
+		else if(d == 0x0){ // write 
+			d = read_usart2() ; 
+			GPIOB->ODR = d ;
+			//GPIOB->ODR = 0 ;
+			return ; 
 		}
 	}
 	else{
@@ -99,6 +109,9 @@ void init_usart2 (void) {
 
 void write_to_master(){
 	GPIOA->ODR |= mask(9);
+	for(int i = 0 ; i < 3 ; i++){
+		write_usart2(synchronizer[i]);
+	}
 	write_usart2(10);
 	write_usart2(12);//write 
 	write_usart2(GPIOB->ODR & 0x0F );

@@ -88,10 +88,19 @@ void write_bytes(){
 }
 void read_bytes(){
 	uint8_t synch[1] = {0};
+	int sync_count = 3 ;
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_RESET);
-	while(synch){
+	HAL_UART_Receive(&huart2,(uint8_t*)synch,1,HAL_MAX_DELAY);
+	while(sync_count>0){
+		if(synch[0]==synchronizer[0]){
+			sync_count--;
+		}
+		if(sync_count == 0 ){
+			break ; 
+		}
 		HAL_UART_Receive(&huart2,(uint8_t*)synch,1,HAL_MAX_DELAY);
 	}
+	//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_SET);
 	HAL_UART_Receive(&huart2,(uint8_t*)readBuffer,3,HAL_MAX_DELAY);
 }
 void write_seven_segment(int device_select){
@@ -105,20 +114,36 @@ void display_led(uint8_t value){
 		HAL_GPIO_WritePin(GPIOB,mask((i+4)),GPIO_PIN_SET & 0x1 & ( value >> i));
 	}
 }
+
+uint8_t get_led_value(){
+	uint8_t value = 0 ; 
+	for(int i = 0 ; i < 4 ; i++){
+		value |= HAL_GPIO_ReadPin(GPIOB,mask((i+4))) << i ; 
+	}
+	return value;
+}
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 	//return ;
 	switch(GPIO_PIN){
 		case GPIO_PIN_0 : 
-			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_4);
+			HAL_GPIO_TogglePin(GPIOB,mask(4));
+			make_frames(0,get_led_value());
+			write_bytes();
 			break; 
 		case GPIO_PIN_1 : 
-			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_5);
+			HAL_GPIO_TogglePin(GPIOB,mask(5));
+			make_frames(0,get_led_value());
+			write_bytes();
 			break;
 		case GPIO_PIN_2 : 
-			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_6);
+			HAL_GPIO_TogglePin(GPIOB,mask(6));
+			make_frames(0,get_led_value());
+			write_bytes();
 			break;
 		case GPIO_PIN_3 : 
-			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
+			HAL_GPIO_TogglePin(GPIOB,mask(7));
+			make_frames(0,get_led_value());
+			write_bytes();
 			break;
 		case GPIO_PIN_8 : 
 			if (switch_select_2)
@@ -126,12 +151,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 			if(switch_select_1!=1){
 				selected_device = 1 ; 
 				switch_select_1 = 1 ; 
-				make_frames(1,0); 
+				make_frames(1,get_led_value()); 
 				write_bytes();
 				read_bytes();
 				display_led(readBuffer[2]);
-				while(1);
-				//write_string((char*)(readBuffer[0]+'0'));
 			}
 			else{
 				switch_select_1 = 0 ;
