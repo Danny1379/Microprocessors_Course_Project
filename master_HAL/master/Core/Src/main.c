@@ -66,7 +66,7 @@ void write_string(char* str){
 	}
 	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
 }
-/*void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 	//write_string("h");
 	//return ;
 	switch(GPIO_PIN){
@@ -83,7 +83,7 @@ void write_string(char* str){
 			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
 			break;
 	}
-}*/
+}
 
 void handle_key_pressed(){
 	//write_string("h");
@@ -141,7 +141,7 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
-	//HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
+	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
 	
   /* USER CODE END 2 */
 
@@ -150,7 +150,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		handle_key_pressed();
+		//handle_key_pressed();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -273,7 +273,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
                           |GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB4 PB5 PB6 PB7 */
