@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define mask(x) (1U << x)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -40,7 +41,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -50,15 +50,64 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+void write_string(char* str);
+void handle_key_pressed();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void write_string(char* str){
+	while(*str){
+		HAL_UART_Transmit(&huart2,(uint8_t*)str,1,10);
+		str++ ;
+	}
+	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
+}
+/*void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
+	//write_string("h");
+	//return ;
+	switch(GPIO_PIN){
+		case GPIO_PIN_0 : 
+			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_4);
+			break; 
+		case GPIO_PIN_1 : 
+			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_5);
+			break;
+		case GPIO_PIN_2 : 
+			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_6);
+			break;
+		case GPIO_PIN_3 : 
+			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
+			break;
+	}
+}*/
+
+void handle_key_pressed(){
+	//write_string("h");
+	int pressed_flag = 0 ; 
+	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == 1){
+		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_4);
+		pressed_flag = 1 ;
+	}
+	else if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_1) == 1){
+		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_5);
+		pressed_flag = 1 ;
+	}
+	else if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2) == 1){
+		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_6);
+		pressed_flag = 1 ;
+	}
+	else if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3) == 1){
+		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
+		pressed_flag = 1 ;
+	}
+	if(pressed_flag == 1)
+		HAL_Delay(100);
+	return ;
+}
 /* USER CODE END 0 */
 
 /**
@@ -84,25 +133,24 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+	
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART1_UART_Init();
-	//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET);
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
+	//HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
 	
   /* USER CODE END 2 */
 
-	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1, 10);
-	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
+		handle_key_pressed();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -145,41 +193,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-}
-
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-	
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-	
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
 }
 
 /**
@@ -234,6 +247,9 @@ static void MX_GPIO_Init(void)
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5|GPIO_PIN_9, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PC0 PC1 PC2 PC3
@@ -244,6 +260,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA5 PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB0 PB1 PB2 PB3
                            PB8 PB9 */
