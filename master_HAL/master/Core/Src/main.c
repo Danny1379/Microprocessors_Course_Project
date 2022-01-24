@@ -44,7 +44,8 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+unsigned int selected_device; 
+unsigned int segment_map[10] = {0x3F, 0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; //catod based seven segment decoder mapping 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,6 +55,7 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void write_string(char* str);
 void handle_key_pressed();
+void write_seven_segment(int device_select);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -65,6 +67,13 @@ void write_string(char* str){
 		str++ ;
 	}
 	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
+}
+
+
+void write_seven_segment(int device_select){
+	for(int i = 0 ; i < 7 ; i++){
+		HAL_GPIO_WritePin(GPIOC,mask(i),GPIO_PIN_SET & 0x1 & (segment_map[device_select] >> i));
+	}
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 	//write_string("h");
@@ -82,32 +91,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 		case GPIO_PIN_3 : 
 			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
 			break;
+		case GPIO_PIN_8 : 
+			selected_device = 1 ;
+			break ; 
+		case GPIO_PIN_9 : 
+			selected_device = 2 ;
+			break ; 
 	}
 }
 
-void handle_key_pressed(){
-	//write_string("h");
-	int pressed_flag = 0 ; 
-	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == 1){
-		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_4);
-		pressed_flag = 1 ;
-	}
-	else if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_1) == 1){
-		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_5);
-		pressed_flag = 1 ;
-	}
-	else if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2) == 1){
-		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_6);
-		pressed_flag = 1 ;
-	}
-	else if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3) == 1){
-		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
-		pressed_flag = 1 ;
-	}
-	if(pressed_flag == 1)
-		HAL_Delay(100);
-	return ;
-}
+
 /* USER CODE END 0 */
 
 /**
@@ -144,13 +137,12 @@ int main(void)
 	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
 	
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-		//handle_key_pressed();
+		write_seven_segment(selected_device);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
