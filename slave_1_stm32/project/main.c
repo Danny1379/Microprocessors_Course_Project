@@ -18,51 +18,51 @@ void write_usart2(uint32_t ch);
 void usart2_write_string(char* str);
 void GPIOB_init(void);
 void delayMS(int n);
+unsigned int read_usart2(void);
 //-------------------------||
 
 
 int main(void){
 	init_usart2();
 	GPIOB_init();
-	GPIOB->ODR = 0 ; 
-	GPIOB->ODR = 1 ; 
 	//usart2_write_string("hello bitches");
-	GPIOA->MODER |= 0x00040000;
-	GPIOA->ODR |= 0x00000200 ;
 	while(1){ // main event loop 
-		GPIOB->ODR ^= 1 ; 
-		write_usart2('i');
-		delayMS(10);
+		char d = (char) read_usart2();
+		if(d == '1'){
+			GPIOB->ODR ^= 7 ;
+		}
 	}
 }
 
 void GPIOB_init(void){
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN ; 
-	GPIOB->MODER &= ~0x0000000FU ; 
-	GPIOB->MODER |= 0x000000001 ;
+	GPIOB->MODER &= ~0x000000FFU ; 
+	GPIOB->MODER |= 0x000000055U ; // set led ports to output mode 
+	GPIOB->ODR &= 0 ; 
 }
 
 void init_usart2 (void) {
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; 	/* enable GPIOA clock */
-	RCC->APB1ENR |= 0x20000; 							/* enable USART2 clock */
-	
-	/* Configure PA2 for USART2_TX */
-	GPIOA->OSPEEDR |= 0x40;
+	// clock enable
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+	RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+
+	GPIOA->OSPEEDR |= 0x40; // don't fix what's not broken
 	GPIOA->OSPEEDR |= 0x80;
+	// set mode to alt func
+	GPIOA->MODER &= ~0x00F0U;
+	GPIOA->MODER |= 0x00A0;
+	// set af to usart rx : pin 3  and tx : pin 2(not used)
 	GPIOA->AFR[0] &= ~0x0FF00U;
-	GPIOA->AFR[0] |= 0x07700; /* alt7 for USART2 */
-	GPIOA->MODER  &= ~0x00F0U;
-	GPIOA->MODER  |= 0x00A0; /* enable alternate function for PA2,PA3*/
-	
-	
-	USART2->BRR = BRR_value  ;/* 9600 baud @ 16 MHz */
-	
-	
-	USART2->CR1 = USART_CR1_TE; /* enable Tx, 8-bit data */
-	//USART2->CR1 |= USART_CR1_TCIE;
-	//USART2->CR2 = 0x0000; /* 1 stop bit */
-	//USART2->CR3 = 0x0000; /* no flow control */
-	USART2->CR1 |= USART_CR1_UE; /* enable USART2 */
+	GPIOA->AFR[0] |= 0x07700;
+
+	// set baud rate as 9600 for 16Mhz pclk value (defined above)
+	USART2->BRR = BRR_value;
+
+	// enable receive for rx
+	USART2->CR1 = USART_CR1_RE;
+
+	// usart enable
+	USART2->CR1 |= USART_CR1_UE;
 
 }
 
@@ -83,7 +83,13 @@ void usart2_write_string(char* str){
 	//GPIOC->ODR ^= 1 ;
 }
 
-
+unsigned int read_usart2(void)
+{
+	while (!(USART2->SR & USART_SR_RXNE))
+	{
+	} // wait until char arrives 
+	return USART2->DR;
+}
 void delayMS(int n){ // inaccurate delay in milliseconds 
 	for(volatile int i = 0 ; i < 25000 * n ; i ++ ){
 	}

@@ -33,6 +33,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define mask(x) (1U << x)
+#define no_select 10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,8 +45,12 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-unsigned int selected_device; 
-unsigned int segment_map[10] = {0x3F, 0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; //catod based seven segment decoder mapping 
+volatile char readBuffer[3];
+uint8_t writeBuffer[3] ; 
+int switch_select_1 = 0 ; 
+int switch_select_2 = 0 ; 
+unsigned volatile int selected_device = no_select ; 
+unsigned int segment_map[11] = {0x3F, 0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x54}; //catod based seven segment decoder mapping 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,29 +59,41 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void write_string(char* str);
-void handle_key_pressed();
+void read_bytes(void);
+void handle_key_pressed(void);
 void write_seven_segment(int device_select);
+void write_bytes();
+void make_frames(int read_write, uint8_t data);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void make_frames(int read_write , uint8_t data){ 
+	writeBuffer[0] = selected_device ; 
+	writeBuffer[1] = read_write ? 0x80 : 0x0;  //for read msb is 1 
+	writeBuffer[2] = data ; 
+}
 void write_string(char* str){
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
 	while(*str){
-		HAL_UART_Transmit(&huart2,(uint8_t*)str,1,10);
+		HAL_UART_Transmit(&huart2,(uint8_t*)str,1,HAL_MAX_DELAY);
 		str++ ;
 	}
-	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
 }
-
-
+void write_bytes(){
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
+	HAL_UART_Transmit(&huart2,writeBuffer,3,HAL_MAX_DELAY);
+}
+void read_bytes(){
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_RESET);
+	HAL_UART_Receive(&huart2,(uint8_t*)readBuffer,3,HAL_MAX_DELAY);
+}
 void write_seven_segment(int device_select){
 	for(int i = 0 ; i < 7 ; i++){
 		HAL_GPIO_WritePin(GPIOC,mask(i),GPIO_PIN_SET & 0x1 & (segment_map[device_select] >> i));
 	}
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
-	//write_string("h");
 	//return ;
 	switch(GPIO_PIN){
 		case GPIO_PIN_0 : 
@@ -92,10 +109,36 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 			HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
 			break;
 		case GPIO_PIN_8 : 
-			selected_device = 1 ;
+			if (switch_select_2)
+					return ;
+			if(switch_select_1!=1){
+				selected_device = 1 ; 
+				switch_select_1 = 1 ; 
+				make_frames(1,0); 
+				write_bytes();
+				read_bytes();
+				write_string((char*)(readBuffer[0]+'0'));
+			}
+			else{
+				switch_select_1 = 0 ;
+				selected_device = no_select ; 
+			}
 			break ; 
 		case GPIO_PIN_9 : 
-			selected_device = 2 ;
+			if (switch_select_1)
+					return ;
+			if(switch_select_2!=1){
+				selected_device = 2 ; 
+				switch_select_2 = 1 ; 
+				make_frames(1,0); 
+				write_bytes();
+				read_bytes();
+				write_string((char*)(readBuffer[0]+'0'));
+			}
+			else{
+				switch_select_2 = 0 ;
+				selected_device = no_select ; 
+			}
 			break ; 
 	}
 }
@@ -133,9 +176,6 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
-	HAL_UART_Transmit(&huart2,(uint8_t*)"h",1,10);
-	
   /* USER CODE END 2 */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
