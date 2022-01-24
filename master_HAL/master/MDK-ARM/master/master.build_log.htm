@@ -30,13 +30,15 @@ Build target 'master'
 compiling main.c...
 ../Core/Src/main.c(65): warning:  #1295-D: Deprecated declaration write_bytes - give arg types
   void write_bytes();
-../Core/Src/main.c(93): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/main.c(95): warning:  #188-D: enumerated type mixed with another type
   		HAL_GPIO_WritePin(GPIOC,mask(i),GPIO_PIN_SET & 0x1 & (segment_map[device_select] >> i));
-../Core/Src/main.c: 2 warnings, 0 errors
+../Core/Src/main.c(101): warning:  #188-D: enumerated type mixed with another type
+  		HAL_GPIO_WritePin(GPIOB,mask((i+4)),GPIO_PIN_SET & 0x1 & ( value >> i));
+../Core/Src/main.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=5918 RO-data=462 RW-data=80 ZI-data=1704  
+Program Size: Code=5986 RO-data=462 RW-data=80 ZI-data=1704  
 FromELF: creating hex file...
-"master\master.axf" - 0 Error(s), 2 Warning(s).
+"master\master.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 

@@ -49,6 +49,7 @@ volatile char readBuffer[3];
 uint8_t writeBuffer[3] ; 
 int switch_select_1 = 0 ; 
 int switch_select_2 = 0 ; 
+uint8_t synchronizer[3] = {0xFC, 0xFC, 0xFC} ;
 unsigned volatile int selected_device = no_select ; 
 unsigned int segment_map[11] = {0x3F, 0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x54}; //catod based seven segment decoder mapping 
 /* USER CODE END PV */
@@ -82,15 +83,26 @@ void write_string(char* str){
 }
 void write_bytes(){
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
+	HAL_UART_Transmit(&huart2,synchronizer,3,HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2,writeBuffer,3,HAL_MAX_DELAY);
 }
 void read_bytes(){
+	uint8_t synch[1] = {0};
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_RESET);
+	while(synch){
+		HAL_UART_Receive(&huart2,(uint8_t*)synch,1,HAL_MAX_DELAY);
+	}
 	HAL_UART_Receive(&huart2,(uint8_t*)readBuffer,3,HAL_MAX_DELAY);
 }
 void write_seven_segment(int device_select){
 	for(int i = 0 ; i < 7 ; i++){
 		HAL_GPIO_WritePin(GPIOC,mask(i),GPIO_PIN_SET & 0x1 & (segment_map[device_select] >> i));
+	}
+}
+
+void display_led(uint8_t value){
+	for(int i = 0 ; i < 4 ; i++){
+		HAL_GPIO_WritePin(GPIOB,mask((i+4)),GPIO_PIN_SET & 0x1 & ( value >> i));
 	}
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
@@ -117,7 +129,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 				make_frames(1,0); 
 				write_bytes();
 				read_bytes();
-				write_string((char*)(readBuffer[0]+'0'));
+				display_led(readBuffer[2]);
+				while(1);
+				//write_string((char*)(readBuffer[0]+'0'));
 			}
 			else{
 				switch_select_1 = 0 ;
@@ -135,7 +149,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 				read_bytes();
 				write_string((char*)(readBuffer[0]+'0'));
 			}
-			else{
+			else{   
 				switch_select_2 = 0 ;
 				selected_device = no_select ; 
 			}

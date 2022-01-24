@@ -33,15 +33,12 @@ const int BRR_value = 0x683 ; // baudrate register value
 main.c(11): note: declare 'static' if the variable is not intended to be used outside of this translation unit
 const int BRR_value = 0x683 ; // baudrate register value
       ^
-main.c(96): warning: no newline at end of file [-Wnewline-eof]
-}
- ^
-2 warnings generated.
+1 warning generated.
 compiling main.c...
 linking...
-Program Size: Code=644 RO-data=420 RW-data=0 ZI-data=1632  
+Program Size: Code=860 RO-data=420 RW-data=0 ZI-data=1632  
 FromELF: creating hex file...
-".\slave_bus_controller.axf" - 0 Error(s), 2 Warning(s).
+".\slave_bus_controller.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -67,10 +64,10 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.4.0
 
    * Component: Keil::Device:Startup:2.4.2
+      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xe.s
+      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Source file:   MDK\Device\Source\ARM\STM32F401xx_OPT.s
-      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
-      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xe.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
 Build Time Elapsed:  00:00:01
 </pre>
