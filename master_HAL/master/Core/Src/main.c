@@ -103,7 +103,7 @@ void read_bytes(){
 	//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_SET);
 	HAL_UART_Receive(&huart2,(uint8_t*)readBuffer,3,HAL_MAX_DELAY);
 }
-void write_seven_segment(int device_select){
+void write_seven_segment(int device_select){ 
 	for(int i = 0 ; i < 7 ; i++){
 		HAL_GPIO_WritePin(GPIOC,mask(i),GPIO_PIN_SET & 0x1 & (segment_map[device_select] >> i));
 	}
@@ -117,7 +117,7 @@ void display_led(uint8_t value){
 
 uint8_t get_led_value(){
 	uint8_t value = 0 ; 
-	for(int i = 0 ; i < 4 ; i++){
+	for(int i = 0 ; i < 4 ; i++){ 
 		value |= HAL_GPIO_ReadPin(GPIOB,mask((i+4))) << i ; 
 	}
 	return value;
@@ -158,6 +158,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 			}
 			else{
 				switch_select_1 = 0 ;
+				make_frames(0,0xFF);
+				write_bytes();
 				selected_device = no_select ; 
 			}
 			break ; 
@@ -167,10 +169,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 			if(switch_select_2!=1){
 				selected_device = 2 ; 
 				switch_select_2 = 1 ; 
-				make_frames(1,0); 
+				make_frames(1,get_led_value()); 
 				write_bytes();
 				read_bytes();
-				write_string((char*)(readBuffer[0]+'0'));
+				display_led(readBuffer[2]);
 			}
 			else{   
 				switch_select_2 = 0 ;

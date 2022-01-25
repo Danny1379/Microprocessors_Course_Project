@@ -39,12 +39,49 @@ uint8_t synchronizer[3] = {0xFC,0xFC,0xFC};
 main.c(12): note: declare 'static' if the variable is not intended to be used outside of this translation unit
 uint8_t synchronizer[3] = {0xFC,0xFC,0xFC};
 ^
-2 warnings generated.
+main.c(16): warning: no previous extern declaration for non-static variable 'selected' [-Wmissing-variable-declarations]
+volatile int selected = 0 ; 
+             ^
+main.c(16): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+volatile int selected = 0 ; 
+         ^
+main.c(34): warning: no previous prototype for function 'EXTI0_IRQHandler' [-Wmissing-prototypes]
+void EXTI0_IRQHandler(void){ // ISR to handle button click for PB0 
+     ^
+main.c(34): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void EXTI0_IRQHandler(void){ // ISR to handle button click for PB0 
+^
+static 
+main.c(49): warning: no previous prototype for function 'EXTI1_IRQHandler' [-Wmissing-prototypes]
+void EXTI1_IRQHandler(void){ // ISR to handle button click for PB0 
+     ^
+main.c(49): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void EXTI1_IRQHandler(void){ // ISR to handle button click for PB0 
+^
+static 
+main.c(64): warning: no previous prototype for function 'EXTI2_IRQHandler' [-Wmissing-prototypes]
+void EXTI2_IRQHandler(void){ // ISR to handle button click for PB0 
+     ^
+main.c(64): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void EXTI2_IRQHandler(void){ // ISR to handle button click for PB0 
+^
+static 
+main.c(79): warning: no previous prototype for function 'EXTI3_IRQHandler' [-Wmissing-prototypes]
+void EXTI3_IRQHandler(void){ // ISR to handle button click for PB0 
+     ^
+main.c(79): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void EXTI3_IRQHandler(void){ // ISR to handle button click for PB0 
+^
+static 
+main.c(141): warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+                        GPIOB->ODR = (d << 4 );
+                                   ~  ~~^~~~
+8 warnings generated.
 compiling main.c...
 linking...
-Program Size: Code=928 RO-data=436 RW-data=4 ZI-data=1636  
+Program Size: Code=1556 RO-data=436 RW-data=4 ZI-data=1644  
 FromELF: creating hex file...
-".\slave_bus_controller.axf" - 0 Error(s), 2 Warning(s).
+".\slave_bus_controller.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -72,10 +109,10 @@ Package Vendor: Keil
    * Component: Keil::Device:Startup:2.4.2
       Source file:   MDK\Device\Source\ARM\STM32F401xx_OPT.s
       Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
-      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xe.s
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xe.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>
