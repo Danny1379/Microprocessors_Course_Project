@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\slave_bus_controller.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\slave_bus_controller.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6140002: Last Updated: Tue Jan 25 14:39:34 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6140002: Last Updated: Tue Jan 25 19:40:21 2022
 <BR><P>
 <H3>Maximum Stack Usage =         32 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -536,11 +536,10 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xe.o(RESET)
 </UL>
-<P><STRONG><a name="[13]"></a>EXTI3_IRQHandler</STRONG> (Thumb, 84 bytes, Stack size 8 bytes, main.o(.text.EXTI3_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = EXTI3_IRQHandler &rArr; write_to_master
+<P><STRONG><a name="[13]"></a>EXTI3_IRQHandler</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, main.o(.text.EXTI3_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI3_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_to_master
-<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_ClearPendingIRQ
+<BR>[Calls]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_ClearPendingIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xe.o(RESET)
 </UL>
@@ -548,11 +547,11 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[5a]"></a>GPIOB_init</STRONG> (Thumb, 216 bytes, Stack size 8 bytes, main.o(.text.GPIOB_init))
+<P><STRONG><a name="[59]"></a>GPIOB_init</STRONG> (Thumb, 216 bytes, Stack size 8 bytes, main.o(.text.GPIOB_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GPIOB_init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
-<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
+<BR>[Calls]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
+<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_ClearPendingIRQ
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -565,11 +564,11 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[5d]"></a>listen_for_master</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, main.o(.text.listen_for_master))
+<P><STRONG><a name="[5c]"></a>listen_for_master</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, main.o(.text.listen_for_master))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = listen_for_master &rArr; write_to_master
 </UL>
-<BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_to_master
-<LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_usart2
+<BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_to_master
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_usart2
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -577,29 +576,28 @@ Global Symbols
 <P><STRONG><a name="[4f]"></a>main</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, main.o(.text.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = main &rArr; listen_for_master &rArr; write_to_master
 </UL>
-<BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;listen_for_master
+<BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;listen_for_master
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_usart2
-<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
+<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOA_init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[5e]"></a>read_usart2</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, main.o(.text.read_usart2))
-<BR><BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;listen_for_master
+<P><STRONG><a name="[5d]"></a>read_usart2</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, main.o(.text.read_usart2))
+<BR><BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;listen_for_master
 </UL>
 
-<P><STRONG><a name="[59]"></a>write_to_master</STRONG> (Thumb, 74 bytes, Stack size 16 bytes, main.o(.text.write_to_master))
+<P><STRONG><a name="[5e]"></a>write_to_master</STRONG> (Thumb, 74 bytes, Stack size 16 bytes, main.o(.text.write_to_master))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = write_to_master
 </UL>
 <BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_usart2
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;listen_for_master
-<LI><a href="#[13]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI3_IRQHandler
+<BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;listen_for_master
 </UL>
 
 <P><STRONG><a name="[61]"></a>write_usart2</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, main.o(.text.write_usart2))
-<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_to_master
+<BR><BR>[Called By]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_to_master
 </UL>
 
 <P><STRONG><a name="[49]"></a>_fp_init</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, fpinit.o(x$fpl$fpinit))
@@ -614,19 +612,19 @@ Global Symbols
 Local Symbols
 </H3>
 <P><STRONG><a name="[58]"></a>__NVIC_ClearPendingIRQ</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(.text.__NVIC_ClearPendingIRQ))
-<BR><BR>[Called By]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
+<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
 <LI><a href="#[13]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI3_IRQHandler
 <LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI2_IRQHandler
 <LI><a href="#[11]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI1_IRQHandler
 <LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[5c]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(.text.__NVIC_EnableIRQ))
-<BR><BR>[Called By]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
+<P><STRONG><a name="[5b]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(.text.__NVIC_EnableIRQ))
+<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
 </UL>
 
-<P><STRONG><a name="[5b]"></a>__NVIC_SetPriority</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, main.o(.text.__NVIC_SetPriority))
-<BR><BR>[Called By]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
+<P><STRONG><a name="[5a]"></a>__NVIC_SetPriority</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, main.o(.text.__NVIC_SetPriority))
+<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_init
 </UL>
 <P>
 <H3>

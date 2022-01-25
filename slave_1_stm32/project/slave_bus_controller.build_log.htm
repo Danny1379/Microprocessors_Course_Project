@@ -73,13 +73,13 @@ main.c(79): note: declare 'static' if the function is not intended to be used ou
 void EXTI3_IRQHandler(void){ // ISR to handle button click for PB0 
 ^
 static 
-main.c(141): warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+main.c(140): warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [-Wsign-conversion]
                         GPIOB->ODR = (d << 4 );
                                    ~  ~~^~~~
 8 warnings generated.
 compiling main.c...
 linking...
-Program Size: Code=1556 RO-data=436 RW-data=4 ZI-data=1644  
+Program Size: Code=1552 RO-data=436 RW-data=4 ZI-data=1644  
 FromELF: creating hex file...
 ".\slave_bus_controller.axf" - 0 Error(s), 8 Warning(s).
 
@@ -107,12 +107,12 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.4.0
 
    * Component: Keil::Device:Startup:2.4.2
-      Source file:   MDK\Device\Source\ARM\STM32F401xx_OPT.s
-      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
-      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xe.s
+      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
+      Source file:   MDK\Device\Source\ARM\STM32F401xx_OPT.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

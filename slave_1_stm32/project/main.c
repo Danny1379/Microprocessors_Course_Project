@@ -34,12 +34,12 @@ void write_to_master(void);
 void EXTI0_IRQHandler(void){ // ISR to handle button click for PB0 
 	EXTI->PR |= mask(0);
 	NVIC_ClearPendingIRQ(EXTI0_IRQn);
-	uint32_t m = __get_PRIMASK() ; // save primask
-	__disable_irq();// disable preemption
-	//
 	if(selected){
 		return ; 
 	}
+	uint32_t m = __get_PRIMASK() ; // save primask
+	__disable_irq();// disable preemption
+	//
 	if(GPIOB->IDR & 0x1){
 		GPIOB->ODR ^= 0x10 ; 
 	}
@@ -49,12 +49,12 @@ void EXTI0_IRQHandler(void){ // ISR to handle button click for PB0
 void EXTI1_IRQHandler(void){ // ISR to handle button click for PB0 
 	EXTI->PR |= mask(0);
 	NVIC_ClearPendingIRQ(EXTI0_IRQn);
-	uint32_t m = __get_PRIMASK() ; // save primask
-	__disable_irq();// disable preemption
-	//
 	if(selected){
 		return ; 
 	}
+	uint32_t m = __get_PRIMASK() ; // save primask
+	__disable_irq();// disable preemption
+	//
 	if(GPIOB->IDR & 0x2){
 		GPIOB->ODR ^= 0x20 ;
 	}
@@ -64,12 +64,12 @@ void EXTI1_IRQHandler(void){ // ISR to handle button click for PB0
 void EXTI2_IRQHandler(void){ // ISR to handle button click for PB0 
 	EXTI->PR |= mask(0);
 	NVIC_ClearPendingIRQ(EXTI0_IRQn);
-	uint32_t m = __get_PRIMASK() ; // save primask
-	__disable_irq();// disable preemption
-	//
 	if(selected){
 		return ; 
 	}
+	uint32_t m = __get_PRIMASK() ; // save primask
+	__disable_irq();// disable preemption
+	//
 	if(GPIOB->IDR & 0x4){
 		GPIOB->ODR ^= 0x40 ;
 	}
@@ -79,13 +79,12 @@ void EXTI2_IRQHandler(void){ // ISR to handle button click for PB0
 void EXTI3_IRQHandler(void){ // ISR to handle button click for PB0 
 	EXTI->PR |= mask(0);
 	NVIC_ClearPendingIRQ(EXTI0_IRQn);
-	write_to_master();
-	uint32_t m = __get_PRIMASK() ; // save primask
-	__disable_irq();// disable preemption
-	//
 	if(selected){
 		return ; 
 	}
+	uint32_t m = __get_PRIMASK() ; // save primask
+	__disable_irq();// disable preemption
+	//
 	if(GPIOB->IDR & 0x8){
 		GPIOB->ODR ^= 0x80 ;
 	}
