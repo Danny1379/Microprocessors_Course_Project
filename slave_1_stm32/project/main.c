@@ -41,6 +41,7 @@ void EXTI0_IRQHandler(void){ // ISR to handle button click for PB0
 	__disable_irq();// disable preemption
 	//
 	if(GPIOB->IDR & 0x1){
+		// toggle led
 		GPIOB->ODR ^= 0x10 ; 
 	}
 	//
@@ -55,7 +56,8 @@ void EXTI1_IRQHandler(void){ // ISR to handle button click for PB0
 	uint32_t m = __get_PRIMASK() ; // save primask
 	__disable_irq();// disable preemption
 	//
-	if(GPIOB->IDR & 0x2){
+	if(GPIOB->IDR & 0x2){ 
+		// toggle led
 		GPIOB->ODR ^= 0x20 ;
 	}
 	//
@@ -71,6 +73,7 @@ void EXTI2_IRQHandler(void){ // ISR to handle button click for PB0
 	__disable_irq();// disable preemption
 	//
 	if(GPIOB->IDR & 0x4){
+		// toggle led
 		GPIOB->ODR ^= 0x40 ;
 	}
 	//
@@ -86,6 +89,7 @@ void EXTI3_IRQHandler(void){ // ISR to handle button click for PB0
 	__disable_irq();// disable preemption
 	//
 	if(GPIOB->IDR & 0x8){
+		// toggle led
 		GPIOB->ODR ^= 0x80 ;
 	}
 	//
@@ -98,7 +102,8 @@ int main(void){
 	GPIOB_init();
 	GPIOA_init();
 	GPIOB->ODR = 0x30 ; 
-	while(1){ // main event loop 
+	while(1){ // main event loop
+		// wait for master to give command 
 		listen_for_master();
 	}
 }
@@ -113,8 +118,11 @@ void GPIOA_init(){
 }
 
 void listen_for_master(){
+	//read enable for max487 
 	GPIOA->ODR &= ~mask(9);
+	// start reading 
 	uint8_t d = read_usart2();
+	// count number of synchronization bytes 
 	int synch_count = 3 ; 
 	while(synch_count>0){
 		if(d==synchronizer[0]){
@@ -122,31 +130,31 @@ void listen_for_master(){
 		}
 		d = read_usart2();
 	}
+	// check received frames 
 	if(d == 0x1){
+		//master override selected 
 		selected = 1 ; 
 		d = read_usart2();
 		if( d == 0x80){ // read 
 			if(read_usart2() == 0x00){
-				//GPIOA->ODR |= mask(9);
-				write_to_master();
+				write_to_master(); // return led information to master 
 			}
 		}
 		else if(d == 0x0){ // write 
-			d = read_usart2() ; 
+			d = read_usart2() ;  // update led information based on received data
 			if(d == 0xFF){
-				selected = 0 ; 
+				selected = 0 ; // deselect override
 				return ; 
 			}
-			GPIOB->ODR = (d << 4 );
-			//GPIOB->ODR = 0 ;
+			GPIOB->ODR = (d << 4 ); // update data 
 			return ; 
 		}
 		else {
-			read_usart2();
+			read_usart2(); // read and ignore 
 		}
 	}
 	else{
-		read_usart2();
+		read_usart2(); // read and ignore
 		read_usart2();
 		return ; 
 	}
@@ -164,7 +172,9 @@ void GPIOB_init(void){
 	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI2_PB ; 
 	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI3_PB ; 
 	EXTI->IMR |= mask(0)|mask(1) | mask(2) | mask(3); 	
-	EXTI->RTSR |= mask(0)|mask(1) | mask(2) | mask(3); 	
+	EXTI->RTSR |= mask(0)|mask(1) | mask(2) | mask(3); 
+
+	// enable interrupts for keys 
 	__enable_irq();
 	NVIC_SetPriority(EXTI0_IRQn,0);
 	NVIC_ClearPendingIRQ(EXTI0_IRQn);
@@ -234,7 +244,6 @@ void usart2_write_string(char* str){
 		write_usart2(*str);
 		str++ ;
 	}
-	//GPIOC->ODR ^= 1 ;
 }
 
 uint8_t read_usart2(void)

@@ -45,12 +45,18 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+// read buffer for uart
 volatile char readBuffer[3];
-uint8_t writeBuffer[3] ; 
+//write buffer for uart
+uint8_t writeBuffer[3];
+// switch state 
 int switch_select_1 = 0 ; 
-int switch_select_2 = 0 ; 
+int switch_select_2 = 0 ;
+// synchronization bytes 
 uint8_t synchronizer[3] = {0xFC, 0xFC, 0xFC} ;
-unsigned volatile int selected_device = no_select ; 
+// currently selected device
+unsigned volatile int selected_device = no_select ;
+// seven segment map 
 unsigned int segment_map[11] = {0x3F, 0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x54}; //catod based seven segment decoder mapping 
 /* USER CODE END PV */
 
@@ -62,9 +68,9 @@ static void MX_USART2_UART_Init(void);
 void write_string(char* str);
 void read_bytes(void);
 void handle_key_pressed(void);
-void write_seven_segment(int device_select);
-void write_bytes();
-void make_frames(int read_write, uint8_t data);
+void write_seven_segment(int device_select); // write to seven segment 
+void write_bytes(); // write bytes on uart 
+void make_frames(int read_write, uint8_t data); // create data frames to be sent 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -74,6 +80,7 @@ void make_frames(int read_write , uint8_t data){
 	writeBuffer[1] = read_write ? 0x80 : 0x0;  //for read msb is 1 
 	writeBuffer[2] = data ; 
 }
+
 void write_string(char* str){
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
 	while(*str){
@@ -81,11 +88,13 @@ void write_string(char* str){
 		str++ ;
 	}
 }
+// write synchronization and buffer bytes 
 void write_bytes(){
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
 	HAL_UART_Transmit(&huart2,synchronizer,3,HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2,writeBuffer,3,HAL_MAX_DELAY);
 }
+// start reading until synch bytes arrive then read 3 bytes of data
 void read_bytes(){
 	uint8_t synch[1] = {0};
 	int sync_count = 3 ;
@@ -100,21 +109,24 @@ void read_bytes(){
 		}
 		HAL_UART_Receive(&huart2,(uint8_t*)synch,1,HAL_MAX_DELAY);
 	}
-	//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_SET);
 	HAL_UART_Receive(&huart2,(uint8_t*)readBuffer,3,HAL_MAX_DELAY);
 }
+
+// write device to seven segment 
 void write_seven_segment(int device_select){ 
 	for(int i = 0 ; i < 7 ; i++){
 		HAL_GPIO_WritePin(GPIOC,mask(i),GPIO_PIN_SET & 0x1 & (segment_map[device_select] >> i));
 	}
 }
 
+// display value on led 
 void display_led(uint8_t value){
 	for(int i = 0 ; i < 4 ; i++){
 		HAL_GPIO_WritePin(GPIOB,mask((i+4)),GPIO_PIN_SET & 0x1 & ( value >> i));
 	}
 }
 
+// read value from led 
 uint8_t get_led_value(){
 	uint8_t value = 0 ; 
 	for(int i = 0 ; i < 4 ; i++){ 
@@ -122,6 +134,8 @@ uint8_t get_led_value(){
 	}
 	return value;
 }
+
+// call back function for key press
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN){
 	//return ;
 	switch(GPIO_PIN){
